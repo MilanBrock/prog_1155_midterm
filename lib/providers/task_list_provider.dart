@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prog_1155_midterm/models/task.dart';
 import 'package:prog_1155_midterm/services/database_operations.dart';
 
+// Storing the tasks for updating the task list
 class TaskListNotifier extends StateNotifier<List<Task>> {
   TaskListNotifier() : super([]) {
     loadTasks();

@@ -4,7 +4,9 @@ import 'package:prog_1155_midterm/models/task.dart';
 import 'package:prog_1155_midterm/providers/task_list_provider.dart';
 import 'package:prog_1155_midterm/providers/sorting_provider.dart';
 import 'package:prog_1155_midterm/services/priority_ordering.dart';
+import 'package:prog_1155_midterm/services/map_select.dart';
 
+// Screen shown after clicking the FAB, to add a new tasks
 class AddTaskScreen extends ConsumerStatefulWidget {
   const AddTaskScreen({super.key});
 
@@ -18,6 +20,11 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
   int? _selectedPriority;
   DateTime? _selectedDate;
 
+  String? _locationName;
+  double? _latitude;
+  double? _longitude;
+
+  // Select a date user the date picker.
   Future<void> _selectDate() async {
     final now = DateTime.now();
     final picked = await showDatePicker(
@@ -31,8 +38,28 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
     }
   }
 
+  // Allow the user to select a location
+  Future<void> _selectLocation() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const MapSelect()),
+    );
+
+    // Save the chosen location to the task
+    if (result != null && result is Map<String, dynamic>) {
+      setState(() {
+        _locationName = result['name'];
+        _latitude = result['lat'];
+        _longitude = result['lng'];
+      });
+    }
+  }
+
+  // After validating, save to db
   Future<void> _saveTask() async {
-    if (!_formKey.currentState!.validate() || _selectedDate == null || _selectedPriority == null) {
+    if (!_formKey.currentState!.validate() ||
+        _selectedDate == null ||
+        _selectedPriority == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please complete all fields')),
       );
@@ -43,6 +70,9 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
       name: _nameController.text.trim(),
       dueDate: _selectedDate!.toIso8601String().split('T')[0],
       priority: _selectedPriority!,
+      locationName: _locationName,
+      latitude: _latitude,
+      longitude: _longitude,
     );
 
     try {
@@ -83,7 +113,7 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
                     child: Text(
                       _selectedDate == null
                           ? 'No date chosen'
-                          : 'Due Date: ${_selectedDate!.toLocal().toIso8601String().split('T')[0]}',
+                          : 'Due Date: ${_selectedDate!.toIso8601String().split('T')[0]}',
                     ),
                   ),
                   ElevatedButton(
@@ -105,6 +135,20 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
                 onChanged: (value) => setState(() => _selectedPriority = value),
                 validator: (value) => value == null ? 'Please select a priority' : null,
               ),
+              const SizedBox(height: 24),
+              ElevatedButton.icon(
+                onPressed: _selectLocation,
+                icon: const Icon(Icons.map),
+                label: const Text('Select Task Location'),
+              ),
+              if (_locationName != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: Text(
+                    'Selected Location: $_locationName',
+                    style: const TextStyle(fontStyle: FontStyle.italic),
+                  ),
+                ),
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: _saveTask,

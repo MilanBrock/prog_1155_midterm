@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:prog_1155_midterm/models/task.dart';
 import 'package:prog_1155_midterm/providers/task_list_provider.dart';
 import 'package:prog_1155_midterm/providers/sorting_provider.dart';
 import 'package:prog_1155_midterm/screens/add_task.dart';
 import 'package:prog_1155_midterm/screens/edit_task.dart';
 import 'package:prog_1155_midterm/screens/task_details.dart';
+import 'package:prog_1155_midterm/screens/task_advice.dart';
 import 'package:prog_1155_midterm/services/priority_ordering.dart';
 
-
+/*
+Shows a list of the current tasks
+Allows adding new tasks by using the FAB
+Tasks can be swiped to be deleted
+Using the menu top-right the tasks can be ordered based on priority or due date
+Allows navigation to AI-helper
+ */
 class TaskListScreen extends ConsumerWidget {
   const TaskListScreen({super.key});
 
@@ -21,6 +27,16 @@ class TaskListScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Task Manager'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.tips_and_updates),
+            tooltip: 'Task Advice',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const TaskAdvice()),
+              );
+            },
+          ),
           PopupMenuButton<SortOption>(
             onSelected: (SortOption selected) async {
               await ref.read(sortOptionProvider.notifier).setSortOption(selected);
@@ -38,7 +54,7 @@ class TaskListScreen extends ConsumerWidget {
                 child: Text('Sort by Priority'),
               ),
             ],
-          )
+          ),
         ],
       ),
       body: ListView.separated(
@@ -67,7 +83,14 @@ class TaskListScreen extends ConsumerWidget {
             },
             child: ListTile(
               title: Text(task.name),
-              subtitle: Text('Due: ${task.dueDate} | Priority: ${getPriorityLabel(task.priority)}'),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Due: ${task.dueDate} | Priority: ${getPriorityLabel(task.priority)}'),
+                  if (task.locationName != null && task.locationName!.isNotEmpty)
+                    Text('Location: ${task.locationName}', style: const TextStyle(fontStyle: FontStyle.italic)),
+                ],
+              ),
               onTap: () {
                 Navigator.push(
                   context,
