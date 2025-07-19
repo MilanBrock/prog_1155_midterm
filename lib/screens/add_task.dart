@@ -24,7 +24,7 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
   double? _latitude;
   double? _longitude;
 
-  bool _isPrivate = false; // <-- NEW: track whether task should be private
+  bool _isPrivate = false;
 
   // Select a date user the date picker.
   Future<void> _selectDate() async {
@@ -75,6 +75,7 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
       locationName: _locationName,
       latitude: _latitude,
       longitude: _longitude,
+      isPrivate: _isPrivate,
     );
 
     try {

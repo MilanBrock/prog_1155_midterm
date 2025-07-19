@@ -19,16 +19,20 @@ class EncryptedDBOperations {
   // Initialization constructor
   EncryptedDBOperations._internal() {
     // final key = Key.fromUtf8(dotenv.env['AES_KEY']!);
+    // _iv = IV.fromUtf8(dotenv.env['AES_IV']!);
     final key = Key.fromUtf8("Y0uW0u1DN0783L13V3H0W53CUr37H1S1");
-    _iv = IV.fromLength(16); // You may replace this with your fixed IV
+    _iv = IV.fromUtf8("Y0uW0u1DN0783L13");
+
     _encrypter = Encrypter(AES(key));
   }
 
   // Encrypt and store task using a unique ID, same method can be used for saving and updating
   Future<void> saveTask(Task task) async {
     final String id = task.id?.toString() ?? const Uuid().v4();
+    task.id = id;
     final plainText = jsonEncode(task.toMap());
     final encrypted = _encrypter.encrypt(plainText, iv: _iv);
+    print("Saving the encrypted data: ${encrypted.base64}");
     await _secureStorage.write(key: id, value: encrypted.base64);
   }
 

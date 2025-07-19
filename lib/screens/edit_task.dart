@@ -100,10 +100,19 @@ class _EditTaskScreenState extends ConsumerState<EditTaskScreen> {
 
     try {
       final sortOption = ref.read(sortOptionProvider);
-      await ref.read(publicTaskListProvider.notifier).updateTask(
-        updatedTask,
-        sortBy: sortOption.name == 'priority' ? 'priority' : 'dueDate',
-      );
+      final isPrivate = widget.task.isPrivate;
+
+      if (isPrivate) {
+        await ref.read(privateTaskListProvider.notifier).updateTask(
+          updatedTask,
+          sortBy: sortOption.name == 'priority' ? 'priority' : 'dueDate',
+        );
+      } else {
+        await ref.read(publicTaskListProvider.notifier).updateTask(
+          updatedTask,
+          sortBy: sortOption.name == 'priority' ? 'priority' : 'dueDate',
+        );
+      }
 
       if (mounted) Navigator.pop(context);
     } catch (e) {

@@ -60,7 +60,12 @@ class PrivateTaskListNotifier extends StateNotifier<List<Task>> {
   }
 
   Future<void> deleteTask(String id, {String sortBy = 'dueDate'}) async {
+    // Optionally optimistically remove from state:
+    state = state.where((t) => t.id.toString() != id).toList();
+
     await EncryptedDBOperations.instance.deleteTask(id);
+
+    // Update state again to make sure it's in sync
     await loadTasks(sortBy: sortBy);
   }
 }

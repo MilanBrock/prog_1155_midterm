@@ -3,7 +3,7 @@ class Task {
   final String name;
   final String dueDate;
   final int priority;
-
+  final bool isPrivate;
   final String? locationName;
   final double? latitude;
   final double? longitude;
@@ -13,6 +13,7 @@ class Task {
     required this.name,
     required this.dueDate,
     required this.priority,
+    this.isPrivate = false,
     this.locationName,
     this.latitude,
     this.longitude,
@@ -26,6 +27,7 @@ class Task {
       'locationName': locationName,
       'latitude': latitude,
       'longitude': longitude,
+      'isPrivate': isPrivate,
     };
     if (id != null) {
       map['id'] = id;
@@ -44,6 +46,7 @@ class Task {
       locationName: map['locationName']?.toString(),
       latitude: map['latitude'] != null ? (map['latitude'] as num).toDouble() : null,
       longitude: map['longitude'] != null ? (map['longitude'] as num).toDouble() : null,
+      isPrivate: map['isPrivate'] == true,
     );
   }
 }
