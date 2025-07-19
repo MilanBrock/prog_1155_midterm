@@ -51,9 +51,18 @@ dependencies:
   flutter_markdown: ^0.6.18
 
 
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
+  # Icons
   cupertino_icons: ^1.0.8
+
+
+  # Encryption dependencies
+  flutter_secure_storage: ^8.0.0
+  encrypt: ^5.0.0
+
+  # For adding a unique key to non-sql entries
+  uuid: ^4.3.3
+
+
 
 dev_dependencies:
   flutter_test:

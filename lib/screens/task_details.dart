@@ -34,7 +34,7 @@ class TaskDetailScreen extends ConsumerWidget {
 
     if (confirm == true) {
       final sortOption = ref.read(sortOptionProvider);
-      await ref.read(taskListProvider.notifier).deleteTask(
+      await ref.read(publicTaskListProvider.notifier).deleteTask(
         task.id!,
         sortBy: sortOption.name,
       );

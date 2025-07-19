@@ -44,10 +44,14 @@ class _EditTaskScreenState extends ConsumerState<EditTaskScreen> {
     final now = DateTime.now();
     final picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate ?? now,
+      // Assertion for dates to save from error
+      initialDate: _selectedDate != null && _selectedDate!.isAfter(now)
+          ? _selectedDate!
+          : now,
       firstDate: now,
       lastDate: DateTime(now.year + 5),
     );
+
     if (picked != null) {
       setState(() => _selectedDate = picked);
     }
@@ -96,7 +100,7 @@ class _EditTaskScreenState extends ConsumerState<EditTaskScreen> {
 
     try {
       final sortOption = ref.read(sortOptionProvider);
-      await ref.read(taskListProvider.notifier).updateTask(
+      await ref.read(publicTaskListProvider.notifier).updateTask(
         updatedTask,
         sortBy: sortOption.name == 'priority' ? 'priority' : 'dueDate',
       );

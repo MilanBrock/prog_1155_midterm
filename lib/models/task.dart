@@ -1,5 +1,5 @@
 class Task {
-  int? id;
+  dynamic id; // use the dynamic type for string IDs in no-sql and int ids in SQL
   final String name;
   final String dueDate;
   final int priority;

@@ -27,9 +27,9 @@ class _TaskAdviceState extends ConsumerState<TaskAdvice> {
 
   Future<void> _loadTasksAndFetchAdvice() async {
     try {
-      // Load tasks from the provider
-      await ref.read(taskListProvider.notifier).loadTasks();
-      final tasks = ref.read(taskListProvider);
+      // Load tasks from the providers
+      await ref.read(publicTaskListProvider.notifier).loadTasks();
+      final tasks = ref.read(publicTaskListProvider);
 
       // Generate a readable summary
       final taskSummary = _summarizeTasks(tasks);

@@ -3,7 +3,7 @@ import 'package:path/path.dart';
 import '../models/task.dart';
 
 
-// Includes the necessary CRUD operations for the applicaton
+// Includes the necessary CRUD operations for the application
 class DBOperations {
 
   // Setup the table

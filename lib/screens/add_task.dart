@@ -24,6 +24,8 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
   double? _latitude;
   double? _longitude;
 
+  bool _isPrivate = false; // <-- NEW: track whether task should be private
+
   // Select a date user the date picker.
   Future<void> _selectDate() async {
     final now = DateTime.now();
@@ -77,10 +79,17 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
 
     try {
       final sortOption = ref.read(sortOptionProvider);
-      await ref.read(taskListProvider.notifier).addTask(
-        newTask,
-        sortBy: sortOption.name == 'priority' ? 'priority' : 'dueDate',
-      );
+      if (_isPrivate) {
+        await ref.read(privateTaskListProvider.notifier).addTask(
+          newTask,
+          sortBy: sortOption.name == 'priority' ? 'priority' : 'dueDate',
+        );
+      } else {
+        await ref.read(publicTaskListProvider.notifier).addTask(
+          newTask,
+          sortBy: sortOption.name == 'priority' ? 'priority' : 'dueDate',
+        );
+      }
 
       if (mounted) Navigator.pop(context);
     } catch (e) {
@@ -150,6 +159,15 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
                   ),
                 ),
               const SizedBox(height: 24),
+
+              // ✅ NEW: Checkbox for private tasks
+              CheckboxListTile(
+                title: const Text('Private Task'),
+                value: _isPrivate,
+                onChanged: (value) => setState(() => _isPrivate = value ?? false),
+                controlAffinity: ListTileControlAffinity.leading,
+              ),
+
               ElevatedButton(
                 onPressed: _saveTask,
                 child: const Text('Save Task'),
